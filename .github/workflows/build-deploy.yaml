@@ -93,7 +93,7 @@ jobs:
           REMOTE_HOST: ${{ secrets.PROD_HOST }}
           REMOTE_USER: ${{ secrets.PROD_USER }}
           TARGET: ${{ secrets.PROD_HOST }}
-        script: |
+        SCRIPT_AFTER: |
             cd app/src
             git pull
             sudo -S systemctl restart api
