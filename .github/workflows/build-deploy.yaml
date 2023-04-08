@@ -74,6 +74,8 @@ jobs:
       name: production
     
     steps:
+      - name: pulling git repo
+        uses: actions/checkout@v2
       - name: Deploy to ubuntu server
         uses: appleboy/ssh-actions@master
         with:
