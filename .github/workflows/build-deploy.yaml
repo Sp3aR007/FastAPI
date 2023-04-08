@@ -7,6 +7,5 @@ jobs:
     steps:
       - name: Pulling git repo
         uses: actions/checkout@v2
-      - name: Saying hi to rahul
-        uses: echo "Hello rahul"
+      - name: setting up python
      
