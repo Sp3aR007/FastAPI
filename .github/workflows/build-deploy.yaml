@@ -87,16 +87,15 @@ jobs:
       #       git pull
       #       echo ${{secrets.PROD_PASSWORD}} | sudo -S systemctl restart api
       - name: Deploy to Server
-        uses: easingthemes/ssh-deploy@main
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          REMOTE_HOST: ${{ secrets.PROD_HOST }}
-          REMOTE_USER: ${{ secrets.PROD_USER }}
-          TARGET: ${{ secrets.PROD_HOST }}
-        SCRIPT_AFTER: |
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{secrets.PROD_HOST}}
+          username: ${{secrets.PROD_USERNAME}}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
             cd app/src
             git pull
-            sudo -S systemctl restart api
+            echo ${{secrets.PROD_PASSWORD}} | sudo -S systemctl restart api
     
     # login to our ubuntu
     # cd /app/src
