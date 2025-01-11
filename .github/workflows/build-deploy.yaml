@@ -93,7 +93,7 @@ jobs:
           username: ${{secrets.PROD_USERNAME}}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            echo "Hello from Github"
+            echo "Hello from Github" > hello.txt
     
     # login to our ubuntu
     # cd /app/src
