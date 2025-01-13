@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, status
 from . import models
 from .database import engine
 from .routers import post, user, auth, vote
