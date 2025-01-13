@@ -2,7 +2,7 @@ from fastapi import FastAPI, status
 from . import models
 from .database import engine
 from .routers import post, user, auth, vote
-from pydantic import BaseSettings
+from pydantic import BaseSettings, BaseModel
 from .config import settings
 from fastapi.middleware.cors import CORSMiddleware
 # models.Base.metadata.create_all(bind=engine)
@@ -18,6 +18,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+class   HealthCheck(BaseModel):
+    """Response model to validate and return when performing a health check"""
+    status: str = "OK"
 @app.get("/")
 def root():
     return {"message": "Hello world!"}
