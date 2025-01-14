@@ -68,7 +68,7 @@ jobs:
           file: ./Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
           push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/fastapi:sha-${{ env.sha_short }}
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/fastapi:sha-${{ steps.sha_short.ouputs.sha_short }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
       - name: Image digest
