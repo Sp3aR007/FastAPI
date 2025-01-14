@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: fastapi
-        image: sp3ar007/fastapi
+        image: sp3ar007/fastapi:sha-70821eb
         imagePullPolicy: Always
         env:
         - name: database_username
