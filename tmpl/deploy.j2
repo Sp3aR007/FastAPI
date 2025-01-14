@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+      - name: fastapi
+        image: sp3ar007/fastapi:{{ image_deploy_tag }}
+        imagePullPolicy: Always
+        env:
+        - name: database_username
+          valueFrom:
+            secretKeyRef:
+              name: my-postgresql-credentials
+              key: username
+        - name: database_password
+          valueFrom:
+            secretKeyRef:
+              name: my-postgresql-credentials
+              key: password
+        - name: database_hostname
+          value: my-postgresql-rw.default.svc.cluster.local
+        - name: database_port
+          value: "5432"
+        - name: database_name
+          value: fastapi
+        - name: secret_key
+          value: 09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7
+        - name: algorithm
+          value: HS256
+        - name: access_token_expire_minutes
+          value: "60"
+        ports:
+        - containerPort: 8000
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        resources:
+          requests:
+            memory: "350Mi"
+            cpu: "250m"
+          limits:
+            memory: "500Mi"
+            cpu: "500m"
