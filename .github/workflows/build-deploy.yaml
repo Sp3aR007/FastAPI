@@ -4,6 +4,7 @@ on: [push, pull_request]
 
 jobs:
   build:
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
     environment:
       name: testings
     env:
@@ -51,6 +52,9 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - name: Get git SHA short
+        id: vars
+        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
       - name: Set up Docker Buildx
         id: buildx
         uses: docker/setup-buildx-action@v1
@@ -62,7 +66,7 @@ jobs:
           file: ./Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
           push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/fastapi:latest
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/fastapi:sha-${{ env.sha_short }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
       - name: Image digest
@@ -76,26 +80,46 @@ jobs:
     steps:
       - name: pulling git repo
         uses: actions/checkout@v2
-      # - name: Deploy to ubuntu server
+      # - name: Deploy to Server
       #   uses: appleboy/ssh-action@master
       #   with:
       #     host: ${{secrets.PROD_HOST}}
       #     username: ${{secrets.PROD_USERNAME}}
-      #     password: ${{secrets.PROD_PASSWORD}}
+      #     key: ${{ secrets.EC2_SSH_KEY }}
       #     script: |
       #       cd app/src
       #       git pull
       #       echo ${{secrets.PROD_PASSWORD}} | sudo -S systemctl restart api
-      - name: Deploy to Server
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{secrets.PROD_HOST}}
-          username: ${{secrets.PROD_USERNAME}}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            git pull
-    
-    # login to our ubuntu
-    # cd /app/src
-    # git pull
-    # systemctl restart api
+      - name: Generate deploy manifest from Jinja template
+        uses: cuchi/jinja2-action@v1.1.0
+        with: 
+          template: tmpl/deploy.j2
+          output_file: ./deploy.yaml
+          strict: true
+          variables: |
+            image_deploy_tag=sha-${{ env.sha_short }}
+            
+      - name: Configure git for the action
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          
+      - name: Stash unstaged changes
+        run: git stash --include-untracked
+        
+      - name: Pull latest changes from the remote branch
+        run: git pull origin main --rebase
+        
+      - name: Apply stashed changes
+        run: git stash pop || echo "No stashed changes to apply"
+
+      - name: Commit deploy manifest on local repo
+        run: |
+          git add ./deploy.yaml
+          git commit -s -m "[skip ci] Generate deployment manifests"
+          
+      - name: Push deploy manifests to remote repo
+        uses: ad-m/github-push-action@v0.6.0
+        with: 
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main
