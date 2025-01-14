@@ -18,7 +18,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-class   HealthCheck(BaseModel):
+class HealthCheck(BaseModel):
     """Response model to validate and return when performing a health check"""
     status: str = "OK"
 @app.get("/")
