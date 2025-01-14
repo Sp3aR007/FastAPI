@@ -8,7 +8,7 @@ spec:
   - name: app-gateway
     namespace: default
   hostnames:
-  - "34.16.39.176.nip.io.argo.com"
+  - "argo.34.133.212.56.nip.io"
   rules:
   - matches:
       - path:
@@ -18,4 +18,4 @@ spec:
     - name: argocd-server
       namespace: argocd
       port: 80
-      kind: Service 
+      kind: Service

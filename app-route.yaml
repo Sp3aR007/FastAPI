@@ -7,7 +7,7 @@ spec:
   - name: app-gateway
     namespace: default
   hostnames:
-  - "34.16.39.176.nip.io"
+  - "34.133.212.56.nip.io"
   rules:
   - matches:
     - path:

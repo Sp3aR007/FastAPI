@@ -11,9 +11,9 @@ spec:
   - name: http
     port: 80
     protocol: HTTP
-    hostname: "34.16.39.176.nip.io"
+    hostname: "34.133.212.56.nip.io"
   - name: https
-    hostname: "34.16.39.176.nip.io"
+    hostname: "34.133.212.56.nip.io"
     port: 443
     protocol: HTTPS
     allowedRoutes:
@@ -28,9 +28,9 @@ spec:
   - name: argo-http
     port: 80
     protocol: HTTP
-    hostname: "34.16.39.176.nip.io.argo.com"
+    hostname: "argo.34.133.212.56.nip.io"
   - name: argo-https
-    hostname: "34.16.39.176.nip.io.argo.com"
+    hostname: "argo.34.133.212.56.nip.io"
     port: 443
     protocol: HTTPS
     allowedRoutes:
