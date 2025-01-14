@@ -23,7 +23,7 @@ class HealthCheck(BaseModel):
     status: str = "OK"
 @app.get("/")
 def root():
-    return {"message": "Hello world!"}
+    return {"message": "Hello from ArgoCD!"}
 
 app.include_router(post.router)
 app.include_router(user.router)
