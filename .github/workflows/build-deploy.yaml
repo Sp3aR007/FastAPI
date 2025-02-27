@@ -100,7 +100,7 @@ jobs:
         uses: cuchi/jinja2-action@v1.1.0
         with: 
           template: tmpl/deploy.j2
-          output_file: ./deploy.yaml
+          output_file: deploy/deploy.yaml
           strict: true
           variables: |
             image_deploy_tag=sha-${{ env.sha_short }}
@@ -121,7 +121,7 @@ jobs:
 
       - name: Commit deploy manifest on local repo
         run: |
-          git add ./deploy.yaml
+          git add deploy/deploy.yaml
           git commit -s -m "[skip ci] Generate deployment manifests"
           
       - name: Push deploy manifests to remote repo

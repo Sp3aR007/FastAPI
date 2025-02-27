@@ -1,18 +1,42 @@
-### Kubernetes Deployment Details 
+A Python FastAPi application with Postgres databse, Docker containerization, Kubernetes Orchestration, Github Actions CI, ArgoCD for CD and Nginx GatewayAPI
+for routing and external access.
 
-## Install CLoudnativePG Database
+# Running Locally
+
+## Clone this repository
+```
+git clone https://github.com/Sp3aR007/FastAPI.git
+```
+
+## Build Docker image
+
+```
+docker build -t sp3ar007/fastapi .
+```
+## Using Docker compose for dev environment
+```
+docker-compose -f docker-compose-dev.yaml up -d
+```
+## Using Dokcer compose for production environment
+```
+docker-compose -f docker-compose-prod.yaml up -d
+```
+
+# Kubernetes Deployment Details 
+
+## Install CLoudnativePG 
 ```
 kubectl apply --server-side -f https://raw.githubusercontent.com/cloudnative-pg/cloudnative-pg/release-1.23/releases/cnpg-1.23.1.yaml
 ```
 
 ## Apply secrets required for the Postgres database
 ```
-kubectl apply -f secret.yaml
+kubectl apply -f deploy/secret.yaml
 ```
 
 ## Deploy Postgres cluster 
 ```
-kubectl apply -f postgres-cluster.yaml
+kubectl apply -f deploy/postgres-cluster.yaml
 ```
 
 ## Exec into postgres instance and intialize the database in the cluster
@@ -31,7 +55,7 @@ CREATE TABLE fastapi ();
 
 ## Create the deployment 
 ```
-kubectl create -f deploy.yaml
+kubectl create -f deploy/deploy.yaml
 ```
 
 ## Install Certmanager
@@ -41,7 +65,7 @@ kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/
 
 ## Edit the cert-manager deployment and add enable-gatweay-api in args section of cert-manager deployment
 ``` 
-kubectl edit deploy/cert-manager -n cert-manager' 
+kubectl edit deploy/cert-manager -n cert-manager
 ```
 ``` 
 - --enable-gateway-api 
@@ -54,7 +78,7 @@ kubectl rollout restart deployment cert-manager -n cert-manager
 
 ## Appy the service configuration
 ```
-kubectl apply -f service.yaml
+kubectl apply -f deploy/service.yaml
 ```
 
 ## Install the Nginx gateway fabric
@@ -67,15 +91,15 @@ helm install ngf oci://ghcr.io/nginxinc/charts/nginx-gateway-fabric --create-nam
 
 ## Create the gateway class and route
 ```
-kubectl create -f gateway.yaml 
+kubectl create -f deploy/gateway.yaml 
 ```
 ``` 
-kubectl create -f app-route.yaml
+kubectl create -f deploy/app-route.yaml
 ```
 
-## Install CLuster issuer for the SSL Certificate
+## Create CLuster issuer for the SSL Certificate
 ```  
-kubectl create -f cluster_issuer.yaml
+kubectl create -f deploy/cluster_issuer.yaml
 ```
 
 
@@ -97,3 +121,43 @@ kubectl rollout restart deployment argocd-server -n argocd
 ``` 
 kubectl get secret --namespace argocd argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 --decode ; echo 
 ```
+
+# Deployment details
+
+## AWS 
+
+### Normal deployment
+
+[!aws-deploy](images/aws-normal-deploy.png)
+
+[!aws-deploy-1](images/aws-normal-deploy-1.png)
+
+### Nginx webserver
+
+[!aws-nginx](images/aws-with-nginx.png)
+
+[!aws-nginx-ec2-dns](images/aws-with-nginx-ec2dns.png)
+
+### SSL encryption
+
+[!aws-nginx-ssl](images/aws-nginx-with-ssl.png)
+
+### AWS CI/CD
+
+[!aws-ci/cd](images/proper-deploy-with-cicd.png)
+
+
+## Kubernetes 
+
+### Kubernetes deployment
+
+[!k8s-deploy](images/k8s-deploy.png)
+
+### Continuous Delivery with ArgoCD
+
+[!k8s-argocd](images/k8s-argocd.png)
+
+### CI/CD with Github Actions and ArgoCD
+
+[!k8s-ci/cd](images/k8s-cicd-with-argocd.png)
+
