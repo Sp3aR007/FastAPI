@@ -153,7 +153,7 @@ kubectl get secret --namespace argocd argocd-initial-admin-secret -o jsonpath="{
 
 [!k8s-deploy](images/k8s-deploy.png)
 
-### Continuous Delivery with ArgoCD
+### Continuous Deployment with ArgoCD
 
 [!k8s-argocd](images/k8s-argocd.png)
 
